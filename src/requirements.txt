@@ -1,0 +1,7 @@
+kedro~=0.18.6
+kedro-viz
+kedro-datasets[pandas.CSVDataSet]~=1.0.0
+kedro-mlflow
+-e git+https://github.com/srai-lab/srai.git@highway2vec#egg=srai[all]
+ipykernel
+ipywidgets

@@ -3,59 +3,70 @@ cities:
   filepath: data/01_raw/cities.csv
   load_args:
     sep: ","
+  layer: raw
 
 areas:
   type: PartitionedDataSet
   path: data/02_intermediate/areas
   dataset:
     type: pandas.FeatherDataSet
-    # load_args:
-    #   columns: ['col1', 'col2', 'col3']
-    #   use_threads: True
   filename_suffix: '.feather'
   overwrite: True
+  layer: intermediate
 
 regions:
   type: PartitionedDataSet
   path: data/02_intermediate/regions
   dataset:
     type: pandas.FeatherDataSet
-    # load_args:
-    #   columns: ['col1', 'col2', 'col3']
-    #   use_threads: True
   filename_suffix: '.feather'
   overwrite: True
+  layer: intermediate
 
 intersections:
   type: PartitionedDataSet
   path: data/02_intermediate/intersections
   dataset:
     type: pandas.FeatherDataSet
-    # load_args:
-    #   columns: ['col1', 'col2', 'col3']
-    #   use_threads: True
   filename_suffix: '.feather'
   overwrite: True
+  layer: intermediate
 
 roads:
   type: PartitionedDataSet
   path: data/02_intermediate/roads
   dataset:
     type: pandas.FeatherDataSet
-    # load_args:
-    #   columns: ['col1', 'col2', 'col3']
-    #   use_threads: True
   filename_suffix: '.feather'
   overwrite: True
+  layer: intermediate
 
 regions_concat:
   type: pickle.PickleDataSet
-  filepath: data/03_features/regions_concat.pkl
+  filepath: data/03_primary/regions_concat.pkl
+  layer: primary
 
 intersections_concat:
-  type: pandas.ParquetDataSet
-  filepath: data/03_features/intersections_concat.parquet
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/intersections_concat.pkl
+  layer: primary
 
 roads_concat:
   type: pickle.PickleDataSet
-  filepath: data/03_features/roads_concat.pkl
+  filepath: data/03_primary/roads_concat.pkl
+  layer: primary
+
+joint:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/joint.pkl
+  layer: primary
+
+embedder:
+  type: pickle.PickleDataSet
+  filepath: data/06_models/embedder.pkl
+  layer: models
+
+embeddings:
+  type: pickle.PickleDataSet
+  filepath: data/07_model_output/embeddings.pkl
+  layer: model_output

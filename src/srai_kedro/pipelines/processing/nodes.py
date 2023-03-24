@@ -1,8 +1,8 @@
 """
-This is a boilerplate pipeline 'data_processing'
+This is a boilerplate pipeline 'processing'
 generated using Kedro 0.18.6
 """
-from typing import Callable, Dict, Tuple
+from typing import Callable, Dict, Tuple, Optional
 import pandas as pd
 import geopandas as gpd
 from tqdm.auto import tqdm
@@ -10,6 +10,7 @@ from srai.utils import geocode_to_region_gdf
 from srai.loaders import OSMWayLoader
 from srai.loaders.osm_way_loader import NetworkType
 from srai.regionizers import H3Regionizer
+from srai.joiners import IntersectionJoiner
 import unidecode
 
 
@@ -40,8 +41,8 @@ def download_areas(cities_df: pd.DataFrame) -> LazyLoadedGeoDataFrames:
     return cities_to_download
 
 
-def regionize_areas(areas: LazyLoadedGeoDataFrames) -> LazyLoadedGeoDataFrames:
-    regionizer = H3Regionizer(9)
+def regionize_areas(areas: LazyLoadedGeoDataFrames, resolution: int) -> LazyLoadedGeoDataFrames:
+    regionizer = H3Regionizer(resolution)
 
     regions = {}
     for area_name, area_func in areas.items():
@@ -54,9 +55,9 @@ def regionize_areas(areas: LazyLoadedGeoDataFrames) -> LazyLoadedGeoDataFrames:
 
 
 def download_road_infrastructure(
-    areas: LazyLoadedGeoDataFrames,
+    areas: LazyLoadedGeoDataFrames, network_type: NetworkType
 ) -> Tuple[LazyLoadedGeoDataFrames, LazyLoadedGeoDataFrames]:
-    loader = OSMWayLoader(NetworkType.DRIVE)
+    loader = OSMWayLoader(network_type)
 
     intersections = {}
     roads = {}
@@ -70,14 +71,31 @@ def download_road_infrastructure(
     return intersections, roads
 
 
-def concat_partitioned_dataset(partitioned_dataset: LazyLoadedGeoDataFrames) -> gpd.GeoDataFrame:
-    return pd.concat([_load_gdf(d) for d in partitioned_dataset.values()])
+def concat_partitioned_dataset(
+    partitioned_dataset: LazyLoadedGeoDataFrames,
+    reset_index_name: Optional[str] = None,
+) -> gpd.GeoDataFrame:
+    df = pd.concat([_load_gdf(d) for d in partitioned_dataset.values()]).drop_duplicates()
+
+    if reset_index_name is not None:
+        df = df.reset_index(drop=True)
+        df.index.name = reset_index_name
+
+    return df
+
+
+def generate_joint_features_with_regions(roads_gdf: gpd.GeoDataFrame, regions_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+    joiner = IntersectionJoiner()
+    return joiner.transform(regions_gdf, roads_gdf, return_geom=False)
 
 
 def _load_gdf(gdf_func: Callable[[], gpd.GeoDataFrame]) -> gpd.GeoDataFrame:
     gdf = gdf_func()
     gdf = gpd.GeoDataFrame(
-        geometry=gpd.GeoSeries.from_wkb(gdf.geometry), index=gdf.index, crs="epsg:4326"
+        gdf,
+        geometry=gpd.GeoSeries.from_wkb(gdf.geometry),
+        index=gdf.index,
+        crs="epsg:4326",
     )
 
     return gdf

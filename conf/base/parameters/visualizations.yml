@@ -1,0 +1,17 @@
+# This is a boilerplate parameters config generated for pipeline 'visualizations'
+# using Kedro 0.18.7.
+#
+# Documentation for this file format can be found in "Parameters"
+# Link: https://docs.kedro.org/en/0.18.7/kedro_project_setup/configuration.html#parameters
+
+
+clustering:
+  n_clusters: null
+  distance_threshold: 0
+  metric: "euclidean"
+  linkage: "ward"
+  clusters: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+
+dendrogram:
+  truncate_mode: "level"
+  p: 3

@@ -67,6 +67,50 @@ embedder:
   layer: models
 
 embeddings:
-  type: pickle.PickleDataSet
-  filepath: data/07_model_output/embeddings.pkl
+  type: kedro_mlflow.io.artifacts.MlflowArtifactDataSet
+  data_set:
+    type: pickle.PickleDataSet
+    filepath: data/07_model_output/embeddings.pkl
   layer: model_output
+
+embeddings_scaled:
+  type: pickle.PickleDataSet
+  filepath: data/08_reporting/embeddings_scaled.pkl
+  layer: reporting
+
+clustering_model:
+  type: pickle.PickleDataSet
+  filepath: data/08_reporting/clustering_model.pkl
+  layer: reporting
+
+linkage_matrix:
+  type: pickle.PickleDataSet
+  filepath: data/08_reporting/linkage_matrix.pkl
+  layer: reporting
+
+dendrogram_plot:
+  type: kedro_mlflow.io.artifacts.MlflowArtifactDataSet
+  data_set:
+    type: matplotlib.MatplotlibWriter
+    filepath: data/08_reporting/dendrogram.png
+    save_args:
+      format: png
+  layer: reporting
+
+regions_clustered:
+  type: pickle.PickleDataSet
+  filepath: data/08_reporting/regions_clustered.pkl
+  layer: reporting
+
+regions_clustered_plots:
+  type: kedro_mlflow.io.artifacts.MlflowArtifactDataSet
+  data_set:
+    type: PartitionedDataSet
+    path: data/08_reporting/regions_clustered
+    dataset:
+      type: matplotlib.MatplotlibWriter
+      save_args:
+        format: png
+    filename_suffix: '.png'
+    overwrite: True
+  layer: reporting

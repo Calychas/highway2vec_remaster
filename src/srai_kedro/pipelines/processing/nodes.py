@@ -9,7 +9,7 @@ from tqdm.auto import tqdm
 from srai.utils import geocode_to_region_gdf
 from srai.loaders import OSMWayLoader
 from srai.loaders.osm_way_loader import NetworkType
-from srai.regionizers import H3Regionizer
+from srai.regionalizers import H3Regionalizer
 from srai.joiners import IntersectionJoiner
 import unidecode
 
@@ -42,7 +42,7 @@ def download_areas(cities_df: pd.DataFrame) -> LazyLoadedGeoDataFrames:
 
 
 def regionize_areas(areas: LazyLoadedGeoDataFrames, resolution: int) -> LazyLoadedGeoDataFrames:
-    regionizer = H3Regionizer(resolution)
+    regionizer = H3Regionalizer(resolution)
 
     regions = {}
     for area_name, area_func in areas.items():

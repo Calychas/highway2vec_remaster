@@ -9,8 +9,8 @@ areas:
   type: PartitionedDataSet
   path: data/02_intermediate/areas
   dataset:
-    type: pandas.FeatherDataSet
-  filename_suffix: '.feather'
+    type: geopandas.ParquetDataSet
+  filename_suffix: '.parquet'
   overwrite: True
   layer: intermediate
 

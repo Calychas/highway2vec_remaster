@@ -1,7 +1,7 @@
 [tool.kedro]
 package_name = "srai_kedro"
 project_name = "Srai Kedro"
-kedro_init_version = "0.18.6"
+kedro_init_version = "0.18.7"
 
 [tool.isort]
 profile = "black"
